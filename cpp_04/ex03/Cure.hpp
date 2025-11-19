@@ -2,7 +2,6 @@
 #define CURE_HPP
 
 #include "AMateria.hpp"
-#include <string>
 
 class Cure : public AMateria
 {
