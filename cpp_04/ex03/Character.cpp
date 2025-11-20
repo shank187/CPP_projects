@@ -5,7 +5,32 @@
 #include <iostream>
 #include <string>
 
-Character::Character():name("default")
+Character::~Character()
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (inventory[i])
+            delete inventory[i];
+    }
+    cleanFloor();
+}
+
+
+void Character::cleanFloor()
+{
+    Node* current = floor;
+    while (current != NULL)
+    {
+        Node* nextNode = current->next;
+        if (current->m)
+            delete current->m; 
+        delete current;
+        current = nextNode;
+    }
+    floor = NULL;
+}
+
+Character::Character():name("default") , floor(NULL)
 {
     inventory[0] = NULL;
     inventory[1] = NULL;
@@ -13,7 +38,7 @@ Character::Character():name("default")
     inventory[3] = NULL;
 }
 
-Character::Character(const std::string& name): name(name)
+Character::Character(const std::string& name): name(name) ,floor(NULL)
 {
     inventory[0] = NULL;
     inventory[1] = NULL;
@@ -22,7 +47,7 @@ Character::Character(const std::string& name): name(name)
 }
 
 Character::Character(const Character& other)
-: name(other.name)
+: name(other.name), floor(NULL)
 {
     for (int i = 0; i < 4; ++i)
     {
@@ -48,11 +73,13 @@ Character& Character::operator=(const Character& other)
         if (other.inventory[i])
             inventory[i] = other.inventory[i]->clone();
     }
+    cleanFloor();
+    this->floor = NULL;
     return *this;
 }
 
 std::string const & Character::getName() const
-{
+{   
     return name;
 }
 
@@ -81,7 +108,14 @@ void Character::unequip(int idx)
     if(!inventory[idx])
         std::cout << "the " << idx << "'th slot is already empty" << std::endl;
     else
+    {
+        Node *newNode = new Node;
+        newNode->m = inventory[idx];
+        newNode->next = floor;
+        floor = newNode;
+        std::cout << "Dropped " << inventory[idx]->getType() << " on the floor." << std::endl;
         inventory[idx] = NULL;
+    }
 }
 
 void Character::use(int idx, ICharacter& target)

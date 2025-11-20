@@ -1,12 +1,12 @@
-NAME = animal
+NAME = interface
 
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRC = main.cpp Animal.cpp Dog.cpp Cat.cpp WrongAnimal.cpp WrongCat.cpp Brain.cpp
+SRC = AMateria.cpp  Character.cpp  MateriaSource.cpp  cure.cpp  Ice.cpp  main.cpp
 OBJ = $(SRC:.cpp=.o)
 
-HEADERS = WrongAnimal.hpp WrongCat.hpp Cat.hpp Animal.hpp Dog.hpp Brain.hpp
+HEADERS = AMateria.hpp  Character.hpp  Cure.hpp  ICharacter.hpp  IMateriaSource.hpp  Ice.hpp  MateriaSource.hpp
 
 all: $(NAME)
 

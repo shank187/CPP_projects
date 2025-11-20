@@ -3,7 +3,7 @@
 #include <iostream>
 #include "ICharacter.hpp"
 
-Cure::Cure():AMateria("ice")
+Cure::Cure():AMateria("cure")
 {
 }
 

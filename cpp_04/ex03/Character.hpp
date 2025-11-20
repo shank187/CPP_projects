@@ -1,28 +1,33 @@
+// Character.hpp
 #ifndef CHARACTER_HPP
 #define CHARACTER_HPP
 
 #include "AMateria.hpp"
 #include "ICharacter.hpp"
-#include <pthread.h>
-#include <string>
 
-class Character: public ICharacter
+class Character : public ICharacter
 {
     private:
-        AMateria* inventory[4];
         std::string name;
+        AMateria* inventory[4];
+        struct Node
+        {
+            AMateria* m;
+            Node* next;
+        };
+        Node* floor;
+        void cleanFloor();
     public:
         Character();
-        Character& operator=(const Character& other);
-        Character(const Character& other);
-        Character(const std::string& name);
+        Character(std::string const & name);
+        Character(Character const & other);
+        Character & operator=(Character const & other);
         virtual ~Character();
-        std::string const & getName() const;
-        void equip(AMateria* m);
-        void unequip(int idx);
-        void use(int idx, ICharacter& target);
 
-
+        virtual std::string const & getName() const;
+        virtual void equip(AMateria* m);
+        virtual void unequip(int idx);
+        virtual void use(int idx, ICharacter& target);
 };
 
 #endif
