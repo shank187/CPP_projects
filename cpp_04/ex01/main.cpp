@@ -5,8 +5,7 @@
 
 int main()
 {
-    int n;
-    n = 20;
+    const int n = 20;
 
     Animal *animal[n];
 

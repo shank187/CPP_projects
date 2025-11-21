@@ -2,6 +2,8 @@
 
 Brain::Brain()
 {
+    for (int i = 0; i < 100; ++i)
+        ideas[i] = "";
 }
 
 Brain::Brain(const Brain& other)

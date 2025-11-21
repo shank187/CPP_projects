@@ -4,7 +4,7 @@
 
 Cat::Cat() : A_Animal("Cat")
 {
-    cat_brain = new(Brain);
+    cat_brain = new Brain();
     std::cout << "Cat default constructor called" << std::endl;
 }
 
@@ -16,7 +16,7 @@ Cat::~Cat()
 
 Cat::Cat(const std::string& type) : A_Animal(type)
 {
-    cat_brain = new(Brain);
+    cat_brain = new Brain();
     std::cout << "Cat parameterized constructor called" << std::endl;
 }
 

@@ -5,7 +5,7 @@
 Dog::Dog() : A_Animal("Dog")
 {
     std::cout << "Dog default constructor called" << std::endl;
-    dog_brain = new(Brain);
+    dog_brain = new Brain();
 }
 
 Dog::~Dog()
@@ -17,7 +17,7 @@ Dog::~Dog()
 Dog::Dog(const std::string& type) : A_Animal(type)
 {
     std::cout << "Dog parameterized constructor called" << std::endl;
-    dog_brain = new(Brain);
+    dog_brain = new Brain();
 }
 
 Dog::Dog(const Dog& other) : A_Animal(other)
