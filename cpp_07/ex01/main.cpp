@@ -1,13 +1,6 @@
 #include "iter.hpp"
 #include <iostream>
 
-
-template <typename T>
-void print(const T &x) { std::cout << x << std::endl; }
-
-template <typename T>
-void increment(T &x) { x++; }
-
 int main() {
     int arr[] = {1, 2, 3};
     const int c_arr[] = {10, 20, 30};

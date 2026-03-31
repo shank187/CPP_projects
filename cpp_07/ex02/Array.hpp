@@ -1,8 +1,6 @@
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
 
-
-
 template<class T>
 class Array
 {
@@ -18,7 +16,6 @@ class Array
         unsigned int size() const;
         T &operator[](unsigned int index);
         const T &operator[](unsigned int index) const;
-        
 };
 
 #include "Array.tpp"
