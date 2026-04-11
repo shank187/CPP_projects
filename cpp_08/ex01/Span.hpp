@@ -25,6 +25,13 @@ class Span{
         Span& operator=(const Span & other);
         
         void addNumber(int n);
+        template <typename InputeIterator>
+        void addNumber(InputeIterator begin, InputeIterator end)
+        {
+            if(v.size() + std::distance(begin, end) > N)
+                throw SpanFullException();
+            v.insert(v.end(), begin, end);
+        }
         unsigned int shortestSpan();
         unsigned int longestSpan();
 };

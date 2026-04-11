@@ -1,6 +1,8 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "Span.hpp"
-
+#include <set> 
 
 int main()
 {
@@ -11,9 +13,27 @@ int main()
     sp.addNumber(17);
     sp.addNumber(9);
     sp.addNumber(11);
-    std::cout << sp.shortestSpan() << std::endl;
-    std::cout << sp.longestSpan() << std::endl;
+    std::cout <<"shortest Span is: "<< sp.shortestSpan() << std::endl;
+    std::cout <<"longest Span is: "<< sp.longestSpan() << std::endl;
+
     // my tests
+    std::srand(time(NULL));
+    unsigned int total = 10001;
+    Span sn(total);
+    std::set<int> uniuques;
+
+    while(uniuques.size() < total)
+        uniuques.insert(std::rand() % 10000000);
+    try
+    {
+        sn.addNumber(uniuques.begin(), uniuques.end());
+        std::cout <<"shortest Span is: "<< sn.shortestSpan() << std::endl;
+        std::cout <<"longest Span is: "<< sn.longestSpan() << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
     
     return 0;
 }

@@ -15,7 +15,9 @@ Span::Span():N(0){}
 
 Span::~Span(){}
 
-Span::Span(int n):N(n){}
+Span::Span(int n):N(n){
+    v.reserve(N);
+}
 
 Span::Span(const Span & other)
 {
@@ -68,3 +70,5 @@ unsigned int Span::longestSpan()
     int max = *std::max_element(v.begin(), v.end());
     return(max - min);
 }
+
+
