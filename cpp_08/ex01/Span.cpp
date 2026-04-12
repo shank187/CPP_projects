@@ -15,7 +15,7 @@ Span::Span():N(0){}
 
 Span::~Span(){}
 
-Span::Span(int n):N(n){
+Span::Span(unsigned int n):N(n){
     v.reserve(N);
 }
 
@@ -37,7 +37,7 @@ Span & Span::operator=(const Span & other)
 
 void Span::addNumber(int n)
 {
-    if(v.size() >= N)
+    if(v.size() >= static_cast<std::size_t>(N))
         throw SpanFullException();
     v.push_back(n);
 }
@@ -48,11 +48,11 @@ unsigned int Span::shortestSpan()
         throw TooFewEelementsException();
     std::vector<int> tmp = v;
     std::sort(tmp.begin(), tmp.end());
-    unsigned int min_span = static_cast<unsigned int>(tmp[1]) - tmp[0];
+    unsigned int min_span = static_cast<unsigned int>(tmp[1] - tmp[0]);
 
     for (std::size_t i = 2; i < tmp.size(); ++i)
     {
-        unsigned int current_span = static_cast<unsigned int>(tmp[i]) - tmp[i - 1];
+        unsigned int current_span = static_cast<unsigned int>(tmp[i] - tmp[i - 1]);
         if(current_span < min_span)
             min_span = current_span;
         if(min_span == 0)
@@ -68,7 +68,7 @@ unsigned int Span::longestSpan()
 
     int min = *std::min_element(v.begin(), v.end());
     int max = *std::max_element(v.begin(), v.end());
-    return(static_cast<unsigned int>(max) - min);
+    return static_cast<unsigned int>(max - min);
 }
 
 

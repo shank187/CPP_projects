@@ -19,7 +19,7 @@ class Span{
                 virtual const char* what() const throw();
         };
         Span();
-        Span(int n);
+        Span(unsigned int n);
         Span(const Span & other);
         ~Span();
         Span& operator=(const Span & other);
@@ -27,7 +27,7 @@ class Span{
         template <typename InputIterator>
         void addNumber(InputIterator begin, InputIterator end)
         {
-            if(v.size() + std::distance(begin, end) > N)
+            if(v.size() + static_cast<std::size_t>(std::distance(begin, end)) > static_cast<std::size_t>(N))
                 throw SpanFullException();
             v.insert(v.end(), begin, end);
         }
