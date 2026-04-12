@@ -23,10 +23,9 @@ class Span{
         Span(const Span & other);
         ~Span();
         Span& operator=(const Span & other);
-        
         void addNumber(int n);
-        template <typename InputeIterator>
-        void addNumber(InputeIterator begin, InputeIterator end)
+        template <typename InputIterator>
+        void addNumber(InputIterator begin, InputIterator end)
         {
             if(v.size() + std::distance(begin, end) > N)
                 throw SpanFullException();
