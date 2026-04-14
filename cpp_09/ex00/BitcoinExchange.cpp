@@ -1,7 +1,9 @@
 #include "BitcoinExchange.hpp"
+#include <cstddef>
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -46,7 +48,7 @@ void BitcoinExchange::loadDatabase(const std::string & path)
     {
         std::ifstream db;
         this->validatePath(path, db, false);
-        this->validateLines(db, false);
+        this->validateDB(db);
     }
     catch (const std::exception & e)
     {
@@ -63,7 +65,49 @@ void BitcoinExchange::validatePath(const std::string & path, std::ifstream & to_
         throw DataBaseException();
 }
 
-void BitcoinExchange::validateLines(const std::ifstream & file, bool is_input_file)
+void BitcoinExchange::parseDate(const std::string & field) const
+{
+    int year, month, day;
+    char dash1,dash2;
+
+    std::stringstream ss(field);
+    if (ss >> year >> dash1 >> month >> dash2 >> day)
+    {
+        char remaining;
+        if(dash1 != '-' || dash2!= '-' || ss >> remaining)
+            return(throw std::runtime_error("Error: invalid date => " + field));
+        if (month <= 0 || month > 12)
+            return(throw std::runtime_error("Error: invalid date => " + field));
+        bool isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+        if (month == 2 && day == 29 && !isLeap)
+            throw std::runtime_error("Error: invalid date => " + field);
+        if(day == 31 && (month == 4 || month == 6 || month == 9 || 11 == month))
+            return(throw std::runtime_error("Error: invalid date => " + field));
+        if(day <= 0 || day> 31)
+            return(throw std::runtime_error("Error: invalid date => " + field));
+    }
+}
+
+float BitcoinExchange::parsePrice(const std::string & field) const
 {
 
+    return 0;
+}
+
+void BitcoinExchange::validateDB(std::ifstream & file)
+{
+    std::string line;
+    std::getline(file, line);
+    if(line != "date,exchange_rate")
+        throw std::runtime_error("Invalid Header.");
+    while (std::getline(file, line)) {
+        std::size_t pos = line.find(",");
+        if(pos != std::string::npos)
+        {
+            std::string price = line.substr(pos + 1);
+            parsePrice(price);
+            std::string date = line.substr(0, pos);
+            parseDate(date);
+        }
+    }
 }

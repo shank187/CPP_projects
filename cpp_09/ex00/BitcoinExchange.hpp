@@ -27,9 +27,9 @@ class BitcoinExchange {
         void loadDatabase(const std::string & path);
         void exchangeBtc(const std::string & path, bool is_input_file);
         void validatePath(const std::string &path, std::ifstream & to_save, bool is_input_file) const;
-        void validateLines(const std::ifstream & file, bool is_input_file);
+        void validateDB(std::ifstream & file);
         void parseDate(const std::string & field) const;
-        void parsePrice(const std::string & field) const;
+        float parsePrice(const std::string & field) const;
 
         //helpers
         static bool endwith(const std::string &str, const std::string &suffix);
