@@ -3,9 +3,11 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <algorithm>
 
 BitcoinExchange::BitcoinExchange(){}
 
@@ -26,7 +28,7 @@ BitcoinExchange::~BitcoinExchange(){}
 
 const char * BitcoinExchange::DataBaseException::what() const throw()
 {
-    return "An error occurred During opening/reading the DataBase.";
+    return "An error occurred During Opening/reading the DataBase.";
 }
 
 const char * BitcoinExchange::InputFileException::what() const throw()
@@ -60,9 +62,11 @@ void BitcoinExchange::validatePath(const std::string & path, std::ifstream & to_
 {
     if(!is_input_file && !BitcoinExchange::endwith(path, ".csv"))
         throw std::runtime_error("This program must use a database in csv format.");
-    to_save.open(path);
-    if (to_save.is_open())
+    to_save.open(path.c_str());
+    if (!to_save.is_open() && !is_input_file)
         throw DataBaseException();
+    if (!to_save.is_open() && is_input_file)
+        throw InputFileException();
 }
 
 void BitcoinExchange::parseDate(const std::string & field) const
@@ -75,19 +79,19 @@ void BitcoinExchange::parseDate(const std::string & field) const
     {
         char remaining;
         if(dash1 != '-' || dash2!= '-' || ss >> remaining || year <= 0)
-            return(throw std::runtime_error("Error: invalid date => " + field));
+            return(throw std::runtime_error("Error: bad input => " + field));
         if (month <= 0 || month > 12)
-            return(throw std::runtime_error("Error: invalid date => " + field));
+            return(throw std::runtime_error("Error: bad input => " + field));
         bool isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
         if (month == 2 && ((day == 29 && !isLeap) || day > 29))
-            throw std::runtime_error("Error: invalid date => " + field);
+            throw std::runtime_error("Error: invalid day => " + field);
         if(day == 31 && (month == 4 || month == 6 || month == 9 || 11 == month))
-            return(throw std::runtime_error("Error: invalid date => " + field));
+            return(throw std::runtime_error("Error: invalid day => " + field));
         if(day <= 0 || day> 31)
-            return(throw std::runtime_error("Error: invalid date => " + field));
-        }
-        else
-            return(throw std::runtime_error("Error: invalid date => " + field));
+            return(throw std::runtime_error("Error: bad input => " + field));
+    }
+    else
+        return(throw std::runtime_error("Error: bad input => " + field));
 }
 
 float BitcoinExchange::parsePrice(const std::string & field) const
@@ -98,8 +102,10 @@ float BitcoinExchange::parsePrice(const std::string & field) const
 
     if(ss >> price)
     {
-        if(price < 0 || ss >> remaining)
+        if(ss >> remaining)
             return(throw std::runtime_error("Error: invalid price => " + field), 0); 
+        if(price < 0 )
+            return(throw std::runtime_error("Error: not a positive number. => " + field), 0); 
         return price;
     }
     else
@@ -125,16 +131,49 @@ void BitcoinExchange::validateDB(std::ifstream & file)
             parseDate(date);
             Price_History[date] = rate;
         }
+        else {
+            throw std::runtime_error("An error occurred During opening/reading the DataBase.");
+        }
     }
 }
 
+float BitcoinExchange::get_price_date(const std::string & date)
+{
+    float rate = 0;
+    std::map<std::string, float>::iterator it = Price_History.upper_bound(date);
+    if(it == Price_History.begin())
+    {
+        throw std::runtime_error("Error: date too early");
+    }
+    else 
+    {
+        --it;
+        rate = it->second;
+    }
+    return rate;
+}
+
+
 void BitcoinExchange::parseExchangeLine(const std::string & line)
 {
-    std::size_t seppos = line.find("|");
-    std::string date =  line.substr(0, seppos);
-    parseDate(date);
-    std::string value = line.substr(seppos + 1);
-    
+    try
+    {
+        std::size_t seppos = line.find("|");
+        std::string date =  line.substr(0, seppos);
+        date.erase(std::remove_if(date.begin(), date.end(), ::isspace), date.end());
+        parseDate(date);
+        std::string value_str = line.substr(seppos + 1);
+        value_str.erase(std::remove_if(value_str.begin(), value_str.end(), ::isspace), value_str.end());
+        float value = parsePrice(value_str);
+        if(value > 1000)
+            throw std::runtime_error("Error: too large number.");
+        float rate = get_price_date(date);
+        std::cout << date << " => " << value << " = " << rate * value << std::endl;
+    }
+    catch (const std::exception & e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 }
 
 void BitcoinExchange::traverseInput(std::ifstream & ifile)
