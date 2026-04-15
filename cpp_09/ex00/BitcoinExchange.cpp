@@ -74,24 +74,36 @@ void BitcoinExchange::parseDate(const std::string & field) const
     if (ss >> year >> dash1 >> month >> dash2 >> day)
     {
         char remaining;
-        if(dash1 != '-' || dash2!= '-' || ss >> remaining)
+        if(dash1 != '-' || dash2!= '-' || ss >> remaining || year <= 0)
             return(throw std::runtime_error("Error: invalid date => " + field));
         if (month <= 0 || month > 12)
             return(throw std::runtime_error("Error: invalid date => " + field));
         bool isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
-        if (month == 2 && day == 29 && !isLeap)
+        if (month == 2 && ((day == 29 && !isLeap) || day > 29))
             throw std::runtime_error("Error: invalid date => " + field);
         if(day == 31 && (month == 4 || month == 6 || month == 9 || 11 == month))
             return(throw std::runtime_error("Error: invalid date => " + field));
         if(day <= 0 || day> 31)
             return(throw std::runtime_error("Error: invalid date => " + field));
-    }
+        }
+        else
+            return(throw std::runtime_error("Error: invalid date => " + field));
 }
 
 float BitcoinExchange::parsePrice(const std::string & field) const
 {
+    float price;
+    char remaining;
+    std::stringstream ss(field);
 
-    return 0;
+    if(ss >> price)
+    {
+        if(price < 0 || ss >> remaining)
+            return(throw std::runtime_error("Error: invalid price => " + field), 0); 
+        return price;
+    }
+    else
+        return(throw std::runtime_error("Error: invalid price => " + field), 0); 
 }
 
 void BitcoinExchange::validateDB(std::ifstream & file)
@@ -105,9 +117,23 @@ void BitcoinExchange::validateDB(std::ifstream & file)
         if(pos != std::string::npos)
         {
             std::string price = line.substr(pos + 1);
-            parsePrice(price);
+            float rate = parsePrice(price);
             std::string date = line.substr(0, pos);
             parseDate(date);
+            Price_History[date] = rate;
         }
+    }
+}
+
+void BitcoinExchange::exchangeBtc(const std::string & inputPath)
+{
+    try
+    {
+        std::ifstream ifile;
+        this->validatePath(inputPath, ifile, true);
+    }
+    catch (const std::exception & e)
+    {
+        std::cout << e.what() << std::endl;
     }
 }

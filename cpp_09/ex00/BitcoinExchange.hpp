@@ -25,11 +25,12 @@ class BitcoinExchange {
         ~BitcoinExchange();
         BitcoinExchange & operator=(const BitcoinExchange & other);
         void loadDatabase(const std::string & path);
-        void exchangeBtc(const std::string & path, bool is_input_file);
+        void exchangeBtc(const std::string & inputPath);
         void validatePath(const std::string &path, std::ifstream & to_save, bool is_input_file) const;
         void validateDB(std::ifstream & file);
         void parseDate(const std::string & field) const;
         float parsePrice(const std::string & field) const;
+        void traverseInput(std::ifstream &ifile);
 
         //helpers
         static bool endwith(const std::string &str, const std::string &suffix);
