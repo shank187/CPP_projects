@@ -69,8 +69,8 @@ void BitcoinExchange::parseDate(const std::string & field) const
 {
     int year, month, day;
     char dash1,dash2;
-
     std::stringstream ss(field);
+
     if (ss >> year >> dash1 >> month >> dash2 >> day)
     {
         char remaining;
@@ -109,9 +109,12 @@ float BitcoinExchange::parsePrice(const std::string & field) const
 void BitcoinExchange::validateDB(std::ifstream & file)
 {
     std::string line;
+
     std::getline(file, line);
+
     if(line != "date,exchange_rate")
         throw std::runtime_error("Invalid Header.");
+
     while (std::getline(file, line)) {
         std::size_t pos = line.find(",");
         if(pos != std::string::npos)
@@ -125,15 +128,40 @@ void BitcoinExchange::validateDB(std::ifstream & file)
     }
 }
 
+void BitcoinExchange::parseExchangeLine(const std::string & line)
+{
+    std::size_t seppos = line.find("|");
+    std::string date =  line.substr(0, seppos);
+    parseDate(date);
+    std::string value = line.substr(seppos + 1);
+    
+}
+
+void BitcoinExchange::traverseInput(std::ifstream & ifile)
+{
+    std::string line;
+    std::getline(ifile, line);
+
+    if(line != "date | value")
+        parseExchangeLine(line);
+
+    while(std::getline(ifile, line))
+    {
+        parseExchangeLine(line);
+    }
+}
+
 void BitcoinExchange::exchangeBtc(const std::string & inputPath)
 {
     try
     {
         std::ifstream ifile;
         this->validatePath(inputPath, ifile, true);
+        this->traverseInput(ifile);
     }
     catch (const std::exception & e)
     {
         std::cout << e.what() << std::endl;
     }
 }
+

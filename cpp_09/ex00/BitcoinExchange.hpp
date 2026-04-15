@@ -31,6 +31,7 @@ class BitcoinExchange {
         void parseDate(const std::string & field) const;
         float parsePrice(const std::string & field) const;
         void traverseInput(std::ifstream &ifile);
+        void parseExchangeLine(const std::string & line);
 
         //helpers
         static bool endwith(const std::string &str, const std::string &suffix);
