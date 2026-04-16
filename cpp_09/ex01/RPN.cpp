@@ -1,4 +1,6 @@
 #include "RPN.hpp"
+#include <cstddef>
+#include <stdexcept>
 
 
 RPN::~RPN(){}
@@ -36,7 +38,7 @@ const char * RPN::TooManyOperands::what() const throw()
 
 bool RPN::is_in(char c, const std::string & s)
 {
-    for(int i = 0; i < s.length(); i ++)
+    for(std::size_t i = 0; i < s.length(); i ++)
     {
         if(s[i] == c)
             return true;
@@ -46,9 +48,14 @@ bool RPN::is_in(char c, const std::string & s)
 
 int RPN::calculateLastTwo(char op)
 {
+    if(stack_rpn.size() < 2)
+    {
+        throw ToomanyOperators();
+    }
     int first = stack_rpn.top();
     stack_rpn.pop();
     int second  = stack_rpn.top();
+    stack_rpn.pop();
     if(op == '-')
         return( second - first);
     else if('+' == op)
@@ -62,20 +69,22 @@ int RPN::calculateLastTwo(char op)
 
 int RPN::calculate(const std::string & exp)
 {
-    int current;
-    int resultOfTwo;
-    int operands_count = 0;
 
     for(std::size_t i = 0; i < exp.length(); i++)
     {
+        if(exp[i] == ' ' || exp[i] =='\t')
+            continue;
         if(!is_in(exp[i], "0123456789+-*/"))
             throw InvalidCharacter();
         else if (is_in(exp[i], "0123456789"))
             stack_rpn.push(exp[i] - 48);
         else if(is_in(exp[i], "+-*/"))
             stack_rpn.push(calculateLastTwo(exp[i]));
-
+        if(exp[i + 1] != ' ' && exp[i+1] != '\t' && exp[i+1] != 0)
+            throw std::runtime_error("Error: Numbers and operators must be separated by spaces.");
     }
+    if(stack_rpn.size() != 1)
+        throw TooManyOperands();
+    return stack_rpn.top();
 
-    return 0;
 }
