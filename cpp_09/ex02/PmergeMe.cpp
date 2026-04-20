@@ -1,53 +1,64 @@
 #include "PmergeMe.hpp"
-#include <sstream>
-#include <climits>
 
-PmergeMe::PmergeMe(){}
+PmergeMe::PmergeMe() : _originalSize(0) {}
+PmergeMe::~PmergeMe() {}
 
-PmergeMe::PmergeMe(const PmergeMe & other):vec(other.vec), deq(other.deq){}
-
-PmergeMe::PmergeMe(const std::string & arg)
-{
-    this->loadAndParse(arg);
+// Jacobsthal Generator: J(n) = J(n-1) + 2*J(n-2)
+std::vector<size_t> PmergeMe::generateJacobs(size_t n) {
+    std::vector<size_t> j;
+    if (n <= 1) return j;
+    j.push_back(3);
+    j.push_back(5);
+    while (j.back() < n)
+        j.push_back(j[j.size() - 1] + 2 * j[j.size() - 2]);
+    return j;
 }
 
-PmergeMe::~PmergeMe(){}
-
-PmergeMe & PmergeMe::operator=(const PmergeMe & other)
-{
-    if(this != &other)
-    {
-        this->vec = other.vec;
-        this->deq = other.deq;
+void PmergeMe::loadAndParse(int ac, char **av) {
+    std::string fullInput = "";
+    for (int i = 1; i < ac; ++i) {
+        fullInput += av[i];
+        fullInput += " ";
     }
-    return *this;
-}
-
-void PmergeMe::loadAndParse(const std::string & arg)
-{
-    std::stringstream ss(arg);
+    std::stringstream ss(fullInput);
     std::string token;
-
-    while (ss >> token)
-    {
-        for(int i = 0; i < token.length(); ++i)
-            if(std::isdigit(token[i]))
-                throw std::runtime_error("Error: Invalid character.");
-
-        char *endptr;
-        long val = std::strtol(token.c_str(), &endptr, 10);
-
-        if(val > UINT_MAX || errno == ERANGE)
-            throw std::runtime_error("Error: overflow|underflow.");
-
-        unsigned int i = static_cast<unsigned int>(val);
-        std::vector<unsigned int> innerVec;
-        std::deque<unsigned int> innerDeq;
+    while (ss >> token) {
+        for (size_t i = 0; i < token.length(); ++i)
+            if (!isdigit(token[i])) throw std::runtime_error("Error: Not a positive integer.");
         
-        innerVec.push_back(i);
-        innerDeq.push_back(i);
-        vec.push_back(innerVec);     
-        deq.push_back(innerDeq);
+        char *ptr;
+        long val = strtol(token.c_str(), &ptr, 10);
+        if (errno == ERANGE || val > UINT_MAX) throw std::runtime_error("Error: Overflow.");
 
+        std::vector<unsigned int> v; v.push_back(static_cast<unsigned int>(val));
+        std::deque<unsigned int> d; d.push_back(static_cast<unsigned int>(val));
+        vec.push_back(v);
+        deq.push_back(d);
     }
+    _originalSize = vec.size();
 }
+
+void PmergeMe::solve() {
+    std::cout << "Before: ";
+    for (size_t i = 0; i < vec.size(); ++i) std::cout << vec[i][0] << " ";
+    std::cout << std::endl;
+
+    clock_t startV = clock();
+    recursiveSort(vec);
+    clock_t endV = clock();
+
+    clock_t startD = clock();
+    recursiveSort(deq);
+    clock_t endD = clock();
+
+    std::cout << "After:  ";
+    for (size_t i = 0; i < vec.size(); ++i) std::cout << vec[i][0] << " ";
+    std::cout << std::endl;
+
+    double timeV = static_cast<double>(endV - startV) / CLOCKS_PER_SEC * 1000000;
+    double timeD = static_cast<double>(endD - startD) / CLOCKS_PER_SEC * 1000000;
+
+    std::cout << "Time to process a range of " << _originalSize << " elements with std::vector : " << timeV << " us" << std::endl;
+    std::cout << "Time to process a range of " << _originalSize << " elements with std::deque  : " << timeD << " us" << std::endl;
+}
+
