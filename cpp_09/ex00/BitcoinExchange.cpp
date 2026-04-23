@@ -55,12 +55,27 @@ void BitcoinExchange::loadDatabase(const std::string & path)
 void BitcoinExchange::validatePath(const std::string & path, std::ifstream & to_save, bool is_input_file) const
 {
     if(!is_input_file && !BitcoinExchange::endwith(path, ".csv"))
-        throw std::runtime_error("This program must use a database in csv format.");
+        throw std::runtime_error("Error: This program must use a database in csv format.");
+    
     to_save.open(path.c_str());
     if (!to_save.is_open() && !is_input_file)
         throw DataBaseException();
     if (!to_save.is_open() && is_input_file)
         throw InputFileException();
+    if (to_save.is_open())
+    {
+        char c;
+        to_save.read(&c, 1);
+        
+        if (to_save.fail())
+        {
+            to_save.close();
+            throw std::runtime_error("Error: " + path + " is a directory or unreadable.");
+        }
+
+        to_save.clear(); 
+        to_save.seekg(0, std::ios::beg);
+    }
 }
 
 void BitcoinExchange::parseDate(const std::string & field) const
