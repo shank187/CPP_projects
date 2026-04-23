@@ -1,7 +1,7 @@
 #include "RPN.hpp"
 #include <cstddef>
 #include <stdexcept>
-
+#include <climits>
 
 RPN::~RPN(){}
 
@@ -45,26 +45,37 @@ bool RPN::is_in(char c, const std::string & s)
     }
     return false;
 }
-
 int RPN::calculateLastTwo(char op)
 {
-    if(stack_rpn.size() < 2)
+    if(stack_rpn.size() < 2) throw ToomanyOperators();
+    
+    int first = stack_rpn.top(); stack_rpn.pop();
+    int second = stack_rpn.top(); stack_rpn.pop();
+
+    if (op == '+')
     {
-        throw ToomanyOperators();
+        if (second > 0 && first > INT_MAX - second) throw std::runtime_error("Error: Overflow.");
+        if (second < 0 && first < INT_MIN - second) throw std::runtime_error("Error: Underflow.");
+        return second + first;
     }
-    int first = stack_rpn.top();
-    stack_rpn.pop();
-    int second  = stack_rpn.top();
-    stack_rpn.pop();
-    if(op == '-')
-        return( second - first);
-    else if('+' == op)
-        return( second + first);        
-    else if('*' == op)
-        return( second * first); 
-    if( first == 0)
-        throw InvalidDivision();
-    return(second / first);
+    else if (op == '-')
+    {
+        if (first < 0 && second > INT_MAX + first) throw std::runtime_error("Error: Overflow.");
+        if (first > 0 && second < INT_MIN + first) throw std::runtime_error("Error: Underflow.");
+        return second - first;
+    }
+    else if (op == '*')
+    {
+        double check = static_cast<double>(second) * static_cast<double>(first);
+        if (check > INT_MAX || check < INT_MIN) throw std::runtime_error("Error: Overflow|Underflow.");
+        return second * first;
+    }
+    else if (op == '/')
+    {
+        if (first == 0) throw InvalidDivision();
+        return second / first;
+    }
+    return 0;
 }
 
 int RPN::calculate(const std::string & exp)
@@ -83,8 +94,10 @@ int RPN::calculate(const std::string & exp)
         if(exp[i + 1] != ' ' && exp[i+1] != '\t' && exp[i+1] != 0)
             throw std::runtime_error("Error: Numbers and operators must be separated by spaces.");
     }
-    if(stack_rpn.size() != 1)
+    if(stack_rpn.size() > 1)
         throw TooManyOperands();
+    else if (!stack_rpn.size())
+        throw std::runtime_error("Error: empty string.");
     return stack_rpn.top();
 
 }
