@@ -46,16 +46,10 @@ bool BitcoinExchange::endwith(const std::string &str, const std::string &suffix)
 }
 
 void BitcoinExchange::loadDatabase(const std::string & path)
-{   try
-    {
+{   
         std::ifstream db;
         this->validatePath(path, db, false);
         this->validateDB(db);
-    }
-    catch (const std::exception & e)
-    {
-        std::cout << e.what() << std::endl;
-    }
 }
 
 void BitcoinExchange::validatePath(const std::string & path, std::ifstream & to_save, bool is_input_file) const

@@ -8,7 +8,13 @@ int main(int ac, char **av)
         std::cerr << "Error: invalid argument." << std::endl;
         return 1;
     }
-
-    BitcoinExchange btc("cpp_09/data.csv");
-    btc.exchangeBtc(av[1]);
+    try
+    {
+        BitcoinExchange btc("cpp_09/data.csv");
+        btc.exchangeBtc(av[1]);
+    }
+    catch (const std::exception & e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 }
