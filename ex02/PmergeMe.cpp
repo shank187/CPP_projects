@@ -1,4 +1,9 @@
 #include "PmergeMe.hpp"
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <errno.h>
+
 
 PmergeMe::PmergeMe() : _originalSize(0) {}
 PmergeMe::~PmergeMe() {}

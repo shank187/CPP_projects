@@ -1,15 +1,11 @@
 #ifndef PMERGEME_HPP
 #define PMERGEME_HPP
 
-#include <iostream>
 #include <vector>
 #include <deque>
-#include <string>
-#include <sstream>
 #include <algorithm>
 #include <climits>
 #include <ctime>
-#include <errno.h>
 
 class PmergeMe {
 private:
