@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <string>
 #include <algorithm>
+#include <cctype>
 
 BitcoinExchange::BitcoinExchange(){}
 
@@ -83,7 +84,7 @@ void BitcoinExchange::parseDate(const std::string & field) const
     int year, month, day;
     char dash1,dash2;
     if (field.length() != 10 || field[4] != '-' || field[7] != '-')
-         throw std::runtime_error("Error: bad input => " + field);
+        throw std::runtime_error("Error: bad input => " + field);
 
     std::stringstream ss(field);
     
