@@ -20,6 +20,6 @@ The curriculum is divided into modules, each scaling in complexity:
 Each module is self-contained with its own strict `Makefile` that compiles with `-Wall -Wextra -Werror` flags in C++98 standard. 
 
 ```bash
-cd CPP_Module_04/ex0X
+cd cpp_0X/ex0X
 make
 ./[executable_name]
