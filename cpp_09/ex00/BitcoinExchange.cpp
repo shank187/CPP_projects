@@ -98,6 +98,10 @@ void BitcoinExchange::parseDate(const std::string & field) const
             return(throw std::runtime_error("Error: invalid day => " + field));
         if(day <= 0 || day> 31)
             return(throw std::runtime_error("Error: bad input => " + field));
+        if (year < 2009 || (year == 2009 && month == 1 && day < 2)) {
+            throw std::runtime_error("Error: Date precedes database records => " + field);
+        }
+
     }
     else
         return(throw std::runtime_error("Error: bad input => " + field));
@@ -181,7 +185,7 @@ void BitcoinExchange::parseExchangeLine(const std::string & line)
     }
     catch (const std::exception & e)
     {
-        std::cout << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
 }
 
@@ -209,7 +213,7 @@ void BitcoinExchange::exchangeBtc(const std::string & inputPath)
     }
     catch (const std::exception & e)
     {
-        std::cout << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
 }
 

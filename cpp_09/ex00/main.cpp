@@ -13,6 +13,8 @@ int main(int ac, char **av)
         BitcoinExchange btc("cpp_09/data.csv");
         btc.exchangeBtc(av[1]);    
     } catch (const std::exception & e) {
-        std::cout << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
+        return 1;
     }
+    return 0;
 }
