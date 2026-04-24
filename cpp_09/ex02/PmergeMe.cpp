@@ -3,7 +3,8 @@
 #include <string>
 #include <sstream>
 #include <errno.h>
-
+#include <cstdlib>
+#include <cctype>
 
 PmergeMe::PmergeMe() : _originalSize(0) {}
 PmergeMe::~PmergeMe() {}
@@ -44,7 +45,7 @@ void PmergeMe::loadAndParse(int ac, char **av) {
 
 void PmergeMe::solve() {
     std::cout << "Before: ";
-   for (size_t i = 0; i < vec.size(); ++i) {
+    for (size_t i = 0; i < vec.size(); ++i) {
         if (i == 4 && vec.size() > 5) {
             std::cout << "[...] ";
             break;
