@@ -8,7 +8,6 @@
 PmergeMe::PmergeMe() : _originalSize(0) {}
 PmergeMe::~PmergeMe() {}
 
-// Jacobsthal Generator: J(n) = J(n-1) + 2*J(n-2)
 std::vector<size_t> PmergeMe::generateJacobs(size_t n) {
     std::vector<size_t> j;
     if (n <= 1) return j;
@@ -45,8 +44,13 @@ void PmergeMe::loadAndParse(int ac, char **av) {
 
 void PmergeMe::solve() {
     std::cout << "Before: ";
-    for (size_t i = 0; i < vec.size(); ++i) std::cout << vec[i][0] << " ";
-    std::cout << std::endl;
+   for (size_t i = 0; i < vec.size(); ++i) {
+        if (i == 4 && vec.size() > 5) {
+            std::cout << "[...] ";
+            break;
+        }
+        std::cout << vec[i][0] << " ";
+    }    std::cout << std::endl;
 
     clock_t startV = clock();
     recursiveSort(vec);
@@ -57,8 +61,13 @@ void PmergeMe::solve() {
     clock_t endD = clock();
 
     std::cout << "After:  ";
-    for (size_t i = 0; i < vec.size(); ++i) std::cout << vec[i][0] << " ";
-    std::cout << std::endl;
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (i == 4 && vec.size() > 5) {
+            std::cout << "[...] ";
+            break;
+        }
+        std::cout << vec[i][0] << " ";
+    }    std::cout << std::endl;
 
     double timeV = static_cast<double>(endV - startV) / CLOCKS_PER_SEC * 1000000;
     double timeD = static_cast<double>(endD - startD) / CLOCKS_PER_SEC * 1000000;

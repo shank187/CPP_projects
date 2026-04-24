@@ -72,7 +72,7 @@ private:
                     unsigned int target_boss = nextLevel[k-1][0];
                     while (search_end != main_chain.end()) {
                         if ((*search_end)[0] == target_boss) {
-                            break; // Found the exact limit!
+                            break;
                         }
                         ++search_end;
                     }

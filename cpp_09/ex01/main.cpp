@@ -10,6 +10,8 @@ int main(int ac, char ** av)
     try {
         std::cout << rpn.calculate(av[1]) << std::endl;
     } catch (const std::exception & e) {
-        std::cout << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
+        return 1;
     }
+    return 0;
 }
