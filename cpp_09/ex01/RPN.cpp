@@ -88,11 +88,11 @@ int RPN::calculate(const std::string & exp)
         if(!is_in(exp[i], "0123456789+-*/"))
             throw InvalidCharacter();
         else if (is_in(exp[i], "0123456789"))
-            stack_rpn.push(exp[i] - 48);
+            stack_rpn.push(exp[i] - '0');
         else if(is_in(exp[i], "+-*/"))
             stack_rpn.push(calculateLastTwo(exp[i]));
-        if(exp[i + 1] != ' ' && exp[i+1] != '\t' && exp[i+1] != 0)
-            throw std::runtime_error("Error: Numbers and operators must be separated by spaces.");
+    if(i + 1 < exp.length() && exp[i+1] != ' ' && exp[i+1] != '\t')
+        throw std::runtime_error("Error: Numbers and operators must be separated by spaces.");
     }
     if(stack_rpn.size() > 1)
         throw TooManyOperands();

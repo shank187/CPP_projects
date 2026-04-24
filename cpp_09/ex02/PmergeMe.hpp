@@ -11,7 +11,7 @@ class PmergeMe {
 private:
     std::vector<std::vector<unsigned int> > vec;
     std::deque<std::deque<unsigned int> > deq;
-    int _originalSize;
+    std::size_t _originalSize;
 
     template <typename Container>
     struct CompareFront {
@@ -69,6 +69,7 @@ private:
                 typename T::iterator search_end = main_chain.end();
                 if(!isStraggler)
                 {
+                    search_end = main_chain.begin();
                     unsigned int target_boss = nextLevel[k-1][0];
                     while (search_end != main_chain.end()) {
                         if ((*search_end)[0] == target_boss) {
@@ -77,7 +78,7 @@ private:
                         ++search_end;
                     }
                 }
-                typename T::iterator bound = std::lower_bound(main_chain.begin(), main_chain.end(), 
+                typename T::iterator bound = std::lower_bound(main_chain.begin(), search_end, 
                                                             pend_chain[k-1], CompareFront<typename T::value_type>());
                 main_chain.insert(bound, pend_chain[k-1]);
             }

@@ -82,8 +82,11 @@ void BitcoinExchange::parseDate(const std::string & field) const
 {
     int year, month, day;
     char dash1,dash2;
-    std::stringstream ss(field);
+    if (field.length() != 10 || field[4] != '-' || field[7] != '-')
+         throw std::runtime_error("Error: bad input => " + field);
 
+    std::stringstream ss(field);
+    
     if (ss >> year >> dash1 >> month >> dash2 >> day)
     {
         char remaining;
@@ -172,6 +175,8 @@ void BitcoinExchange::parseExchangeLine(const std::string & line)
     try
     {
         std::size_t seppos = line.find("|");
+        if(seppos == std::string::npos)
+            throw std::runtime_error("Error: bad input =>" + line);
         std::string date =  line.substr(0, seppos);
         date.erase(std::remove_if(date.begin(), date.end(), ::isspace), date.end());
         parseDate(date);
