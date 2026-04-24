@@ -9,6 +9,19 @@
 PmergeMe::PmergeMe() : _originalSize(0) {}
 PmergeMe::~PmergeMe() {}
 
+PmergeMe::PmergeMe(const PmergeMe & other):vec(other.vec), deq(other.deq), _originalSize(other._originalSize){}
+
+PmergeMe& PmergeMe::operator=(const PmergeMe & other)
+{
+    if(this != &other)
+    {
+        this->vec = other.vec;
+        this->deq = other.deq;
+        this->_originalSize = other._originalSize;
+    }
+    return *this;
+}
+
 std::vector<size_t> PmergeMe::generateJacobs(size_t n) {
     std::vector<size_t> j;
     if (n <= 1) return j;

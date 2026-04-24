@@ -105,7 +105,6 @@ void BitcoinExchange::parseDate(const std::string & field) const
         if (year < 2009 || (year == 2009 && month == 1 && day < 2)) {
             throw std::runtime_error("Error: Date precedes database records => " + field);
         }
-
     }
     else
         return(throw std::runtime_error("Error: bad input => " + field));

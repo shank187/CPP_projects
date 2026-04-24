@@ -92,6 +92,8 @@ private:
 public:
     PmergeMe();
     ~PmergeMe();
+    PmergeMe &operator=(const PmergeMe & other);
+    PmergeMe(const PmergeMe & other);
     void loadAndParse(int ac, char **av);
     void solve();
 };
